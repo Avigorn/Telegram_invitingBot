@@ -3,10 +3,12 @@ from aiogram.utils.markdown import bold
 from aiogram import Bot, Dispatcher, F, Router
 from aiogram.types import Message
 from aiogram.filters import Command
+from aiogram.client.session.aiohttp import AiohttpSession
 
 
 # Инициализация бота и диспетчера
-bot = Bot(token='7558541484:AAHU9gdbOrZkesOjyUVx1IpEN2evuMiI0LU', parse_mode=ParseMode.HTML)
+session = AiohttpSession(proxy="protocol://host:port/")
+bot = Bot(token='7558541484:AAHU9gdbOrZkesOjyUVx1IpEN2evuMiI0LU', parse_mode=ParseMode.HTML, session=session)
 dp = Dispatcher()
 
 # Создание роутера для обработки команд
