@@ -1,3 +1,4 @@
+from aiogram.client.default import DefaultBotProperties
 from aiogram.enums import ParseMode
 from aiogram.utils.markdown import bold
 from aiogram import Bot, Dispatcher, F, Router
@@ -7,8 +8,12 @@ from aiogram.client.session.aiohttp import AiohttpSession
 
 
 # Инициализация бота и диспетчера
-session = AiohttpSession(proxy="protocol://host:port/")
-bot = Bot(token='7558541484:AAHU9gdbOrZkesOjyUVx1IpEN2evuMiI0LU', parse_mode=ParseMode.HTML, session=session)
+session = AiohttpSession(proxy="http://proxy.server:3128")
+bot = Bot(
+    token='7558541484:AAHU9gdbOrZkesOjyUVx1IpEN2evuMiI0LU',
+    session=session,
+    default=DefaultBotProperties(parse_mode=ParseMode.HTML)
+)
 dp = Dispatcher()
 
 # Создание роутера для обработки команд
