@@ -73,6 +73,8 @@ async def stop_bot(message: Message):
 if __name__ == '__main__':
     try:
         dp.run_polling(bot)
-    except (KeyboardInterrupt, SystemExit):
-        print("Бот был остановлен.")
-        raise,
+    except KeyboardInterrupt:
+        print("Бот был остановлен по сигналу пользователя.")
+    except SystemExit:
+        print("Бот был остановлен через SystemExit.")
+        raise
