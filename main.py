@@ -2,10 +2,9 @@ from aiogram.client.default import DefaultBotProperties
 from aiogram.enums import ParseMode
 from aiogram.utils.markdown import bold
 from aiogram import Bot, Dispatcher, F, Router
-from aiogram.types import Message
+from aiogram.types import Message, ReplyKeyboardRemove, ReplyKeyboardMarkup, KeyboardButton
 from aiogram.filters import Command
 from aiogram.client.session.aiohttp import AiohttpSession
-
 
 # Инициализация бота и диспетчера
 session = AiohttpSession(proxy="http://proxy.server:3128")
@@ -23,30 +22,43 @@ dp.include_router(router)
 # Обработчик команды /start
 @router.message(Command("start"))
 async def start_command(message: Message):
-    await message.answer('Заходи не бойся - выходи не плачь, я бот-ассистент. Напиши /help, узнай что я могу')
+    kb = [
+        [
+            KeyboardButton(text='Старт'),
+
+        ]
+    ]
+    keyboard = ReplyKeyboardMarkup(keyboard=kb)
+    await message.answer('Заходи не бойся - выходи не плачь, я бот-ассистент. Напиши /help, узнай что я могу', reply_markup= keyboard)
 
 # Обработчик команды /help
-@router.message(Command("help"))
-async def help_command(message: Message):
-    await message.answer('Список моих возможностей:\n'
-                         '/start - начать диалог\n'
-                         '/invite - получить приглашение\n'
-                         '/stop - остановить Шарьинца')
+# @router.message(Command("help"))
+# async def help_command(message: Message):
+#     await message.answer('Список моих возможностей:\n'
+#                          '/start - начать диалог\n'
+#                          '/invite - получить приглашение\n'
+#                          '/stop - остановить Шарьинца')
 
 # Обработчик команды /invite
 @router.message(Command("invite"))
 async def invite_command(message: Message):
+    kb = [
+        [
+            KeyboardButton(text='Приглашение'),
+        ]
+    ]
+    keyboard = ReplyKeyboardMarkup(keyboard=kb)
     chat_id = message.chat.id
     if chat_id == -1001860031189:
-        await message.answer('Это мой шалаш, он не для вас!')
+        await message.answer('Это мой шалаш, он не для вас!', reply_markup= keyboard)
     else:
         # Создание ссылки для приглашения
         link = await bot.create_chat_invite_link(chat_id=-1001860031189, member_limit=1)
-        await message.answer(f'Милости прошу к нашему шалашу {link.invite_link}')
+        await message.answer(f'Милости прошу к нашему шалашу {link.invite_link}', reply_markup= keyboard)
 
 
 # Обработчик сообщения "Я уехал"
-@router.message(F.text.lower() == ['я уехал', 'мы уехали'])
+@router.message(F.text.lower() == ['я уехал', 'мы уехали',])
 async def handle_departure_message(message: Message):
     target_group_id = -1001860031189
 
@@ -67,17 +79,19 @@ async def handle_departure_message(message: Message):
 # Обработчик команды /stop для остановки бота
 @router.message(Command("stop"))
 async def stop_bot(message: Message):
-    await message.answer(bold("Бот останавливается..."), parse_mode=ParseMode.MARKDOWN)
+    await message.answer(bold("Бот останавливается"), parse_mode=ParseMode.MARKDOWN)
     # Остановка поллинга
     await dp.stop_polling()  # Остановка процесса получения обновлений
     await bot.session.close()  # Закрытие сессии бота
     await message.bot.close()  # Закрытие бота
 
+async def main():
+    await dp.start_polling(bot)
 
 # Запуск бота
 if __name__ == '__main__':
     try:
-        dp.run_polling(bot)
+        main()
     except KeyboardInterrupt:
         print("Бот был остановлен по сигналу пользователя.")
     except SystemExit:
