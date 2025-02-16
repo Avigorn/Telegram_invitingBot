@@ -4,7 +4,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="c78ff42f-bdb3-48bd-ad18-ede2277efde1" name="Changes" comment="Change function of starting program in string 73">
+    <list default="true" id="c78ff42f-bdb3-48bd-ad18-ede2277efde1" name="Changes" comment="Add a buttons">
+      <change afterPath="$PROJECT_DIR$/config/config.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/handlers/base_handler.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/handlers/handlers.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
     </list>
@@ -58,6 +61,11 @@
     &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
 }</component>
+  <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="D:\GeekBrains\pythonTelegram_bot\config" />
+    </key>
+  </component>
   <component name="RunManager">
     <configuration name="main" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="pythonTelegram_bot" />
@@ -105,7 +113,12 @@
       <option name="presentableId" value="Default" />
       <updated>1739202341731</updated>
       <workItem from="1739202343192" duration="8508000" />
-      <workItem from="1739213967357" duration="1813000" />
+      <workItem from="1739213967357" duration="2521000" />
+      <workItem from="1739289926591" duration="7082000" />
+      <workItem from="1739375770790" duration="6564000" />
+      <workItem from="1739460364654" duration="9310000" />
+      <workItem from="1739694178119" duration="11220000" />
+      <workItem from="1739720680691" duration="2880000" />
     </task>
     <task id="LOCAL-00001" summary="First version Telegram inviting bot">
       <option name="closed" value="true" />
@@ -139,7 +152,23 @@
       <option name="project" value="LOCAL" />
       <updated>1739214962297</updated>
     </task>
-    <option name="localTasksCounter" value="5" />
+    <task id="LOCAL-00005" summary="The bot variable has been changed">
+      <option name="closed" value="true" />
+      <created>1739216059472</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1739216059472</updated>
+    </task>
+    <task id="LOCAL-00006" summary="Add a buttons">
+      <option name="closed" value="true" />
+      <created>1739292725435</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1739292725435</updated>
+    </task>
+    <option name="localTasksCounter" value="7" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -150,9 +179,11 @@
     <MESSAGE value="Add proxy" />
     <MESSAGE value="Add proxy.txt" />
     <MESSAGE value="Change function of starting program in string 73" />
-    <option name="LAST_COMMIT_MESSAGE" value="Change function of starting program in string 73" />
+    <MESSAGE value="The bot variable has been changed" />
+    <MESSAGE value="Add a buttons" />
+    <option name="LAST_COMMIT_MESSAGE" value="Add a buttons" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
-    <SUITE FILE_PATH="coverage/pythonTelegram_bot$main.coverage" NAME="main Coverage Results" MODIFIED="1739215724757" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/pythonTelegram_bot$main.coverage" NAME="main Coverage Results" MODIFIED="1739295061243" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
   </component>
 </project>
