@@ -2,10 +2,11 @@ import logging
 
 from aiogram import F
 from aiogram.filters import Command
-from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
-from base_handler import BaseHandler
 from datetime import datetime, timedelta
 from aiogram.enums import ContentType
+
+from base_handler import BaseHandler
+from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 
 class StartHandler(BaseHandler):
     def __init__(self, bot, dp):
@@ -13,18 +14,22 @@ class StartHandler(BaseHandler):
         self.register_handlers()
 
     def register_handlers(self):
-        self.router.message(Command("start"))(self.cmd_start)
+        # Регистрация обработчиков через защищенный роутер
+        self._router.message(Command("start"))(self.cmd_start)
 
     async def cmd_start(self, message):
         """Обработка команды /start"""
-        await message.answer("Приветствую тебя, Шарьинец! Прочитайте описание или воспользуйтесь кнопкой Помощь:")
+        await self.bot.send_message(
+            chat_id=message.chat.id,
+            text="Приветствую тебя, Шарьинец! Прочитайте описание или воспользуйтесь кнопкой Помощь:"
+        )
         kb = [
             [InlineKeyboardButton(text="Помощь", callback_data="help")],
             [InlineKeyboardButton(text="Приглашение", callback_data="invite")],
             [InlineKeyboardButton(text="Мероприятие", callback_data="event")],
         ]
         keyboard = InlineKeyboardMarkup(inline_keyboard=kb)
-        await message.answer("Выберите одну из опций:", reply_markup=keyboard)
+        await self.bot.send_message(chat_id=message.chat.id, text="Выберите одну из опций:", reply_markup=keyboard)
 
 
 class HelpButton(BaseHandler):
