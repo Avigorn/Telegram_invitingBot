@@ -29,3 +29,7 @@ class BaseHandler:
     @property
     def dp(self):
         return self.__dp
+
+    @property
+    def router(self):
+        return self._router  # Геттер для доступа к роутеру
