@@ -4,11 +4,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="c78ff42f-bdb3-48bd-ad18-ede2277efde1" name="Changes" comment="Add a requirements.txt">
-      <change afterPath="$PROJECT_DIR$/config/__init__.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/handlers/__init__.py" afterDir="false" />
+    <list default="true" id="c78ff42f-bdb3-48bd-ad18-ede2277efde1" name="Changes" comment="Add a __init__.py in config and handlers">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/config/middleware.py" beforeDir="false" afterPath="$PROJECT_DIR$/config/middleware.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/config/config.py" beforeDir="false" afterPath="$PROJECT_DIR$/config/config.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -128,7 +127,7 @@
       <workItem from="1739720680691" duration="10623000" />
       <workItem from="1739806158085" duration="1311000" />
       <workItem from="1739807561595" duration="5459000" />
-      <workItem from="1739817950864" duration="2008000" />
+      <workItem from="1739817950864" duration="3673000" />
     </task>
     <task id="LOCAL-00001" summary="First version Telegram inviting bot">
       <option name="closed" value="true" />
@@ -226,7 +225,15 @@
       <option name="project" value="LOCAL" />
       <updated>1739812314551</updated>
     </task>
-    <option name="localTasksCounter" value="13" />
+    <task id="LOCAL-00013" summary="Add a __init__.py in config and handlers">
+      <option name="closed" value="true" />
+      <created>1739820145048</created>
+      <option name="number" value="00013" />
+      <option name="presentableId" value="LOCAL-00013" />
+      <option name="project" value="LOCAL" />
+      <updated>1739820145048</updated>
+    </task>
+    <option name="localTasksCounter" value="14" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -245,9 +252,10 @@
     <MESSAGE value="Add a def router" />
     <MESSAGE value="Add a DB with a bot_token, chats, messages, user_activity and users tables" />
     <MESSAGE value="Add a requirements.txt" />
-    <option name="LAST_COMMIT_MESSAGE" value="Add a requirements.txt" />
+    <MESSAGE value="Add a __init__.py in config and handlers" />
+    <option name="LAST_COMMIT_MESSAGE" value="Add a __init__.py in config and handlers" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
-    <SUITE FILE_PATH="coverage/pythonTelegram_bot$main.coverage" NAME="main Coverage Results" MODIFIED="1739819381377" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/pythonTelegram_bot$main.coverage" NAME="main Coverage Results" MODIFIED="1739820057351" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
   </component>
 </project>

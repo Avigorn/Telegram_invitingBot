@@ -12,9 +12,19 @@ from config.config import load_config
 # Настройка логирования
 logging.basicConfig(level=logging.INFO)
 
+# Загрузка конфигурации
+try:
+    chats = load_config()
+    INVITING_CHAT_ID = chats.get("INVITING_CHAT")
+    INVITED_CHAT_ID = chats.get("INVITED_CHAT")
+except Exception as e:
+    print(f"Ошибка загрузки конфигурации: {e}")
+    INVITING_CHAT_ID = None
+    INVITED_CHAT_ID = None
+
 # Инициализация бота
 session = AiohttpSession(proxy="http://proxy.server:3128")
-token, chats = load_config()
+token = load_config()
 bot = Bot(token=token, session=session, default=DefaultBotProperties(parse_mode=ParseMode.HTML))
 dp = Dispatcher()
 
@@ -22,10 +32,10 @@ dp.message.middleware(AntiSpamMiddleware())
 
 # Инициализация обработчиков
 start_handler = StartHandler(bot, dp)
-help_button = HelpButton(bot, dp, chats["INVITED_CHAT"])
-invite_button = InviteButton(bot, dp, chats["INVITING_CHAT"], chats["INVITED_CHAT"])
-event_button = EventButton(bot, dp, chats["INVITED_CHAT"])
-departure_handler = DepartureHandler(bot, dp, chats["INVITED_CHAT"])
+help_button = HelpButton(bot, dp, INVITED_CHAT_ID)
+invite_button = InviteButton(bot, dp, INVITING_CHAT_ID, INVITED_CHAT_ID)
+event_button = EventButton(bot, dp, INVITED_CHAT_ID)
+departure_handler = DepartureHandler(bot, dp, INVITED_CHAT_ID)
 new_member_handler = NewMemberHandler(bot, dp)
 chat_selection_handler = ChatSelectionHandler(bot, dp)
 message_handler = MessageHandler(bot, dp)

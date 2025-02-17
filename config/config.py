@@ -4,6 +4,60 @@ import sqlite3
 def connect_db():
     return sqlite3.connect("identifier.sqlite")
 
+def create_tables():
+    connection = connect_db()
+    cursor = connection.cursor()
+
+    # Таблица для хранения ID чатов
+    cursor.execute("""
+    CREATE TABLE IF NOT EXISTS chats (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        chat_type TEXT NOT NULL, -- INVITING_CHAT или INVITED_CHAT
+        chat_id INTEGER NOT NULL UNIQUE
+    )
+    """)
+
+    # Таблица для хранения токена бота
+    cursor.execute("""
+    CREATE TABLE IF NOT EXISTS bot_token (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        token TEXT NOT NULL UNIQUE
+    )
+    """)
+
+    # Таблица для хранения пользователей
+    cursor.execute("""
+    CREATE TABLE IF NOT EXISTS users (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        user_id INTEGER NOT NULL UNIQUE,
+        username TEXT,
+        full_name TEXT,
+        joined_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    )
+    """)
+
+    # Таблица для хранения сообщений
+    cursor.execute("""
+    CREATE TABLE IF NOT EXISTS messages (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        user_id INTEGER NOT NULL,
+        message_text TEXT,
+        sent_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    )
+    """)
+
+    # Таблица для отслеживания активности пользователей
+    cursor.execute("""
+    CREATE TABLE IF NOT EXISTS user_activity (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        user_id INTEGER NOT NULL,
+        request_time DATETIME DEFAULT CURRENT_TIMESTAMP
+    )
+    """)
+
+    connection.commit()
+    connection.close()
+
 # Загрузка конфигурации
 def load_config():
     connection = connect_db()
