@@ -1,12 +1,85 @@
 import logging
+from datetime import datetime, timedelta
 
 from aiogram import F
-from aiogram.filters import Command
-from datetime import datetime, timedelta
 from aiogram.enums import ContentType
-
-from base_handler import BaseHandler
+from aiogram.filters import Command
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
+
+from config.config import add_user, save_chat, get_users_in_chat, add_message
+from base_handler import BaseHandler
+
+
+class NewMemberHandler(BaseHandler):
+    def __init__(self, bot, dp):
+        super().__init__(bot, dp)
+        self.register_handlers()
+
+    def register_handlers(self):
+        self._router.chat_member()(self.handle_new_member)
+
+    async def handle_new_member(self, event):
+        """Обработка добавления нового участника"""
+        new_member = event.new_chat_member.user
+        chat_id = event.chat.id
+
+        # Добавляем пользователя в базу данных
+        add_user(
+            user_id=new_member.id,
+            username=new_member.username,
+            full_name=new_member.full_name,
+            chat_id=chat_id
+        )
+
+        # Приветствуем нового участника
+        await self.bot.send_message(
+            chat_id=chat_id,
+            text=f"Привет, {new_member.full_name}! Добро пожаловать!"
+        )
+
+class ChatSelectionHandler(BaseHandler):
+    def __init__(self, bot, dp):
+        super().__init__(bot, dp)
+        self.register_handlers()
+
+    def register_handlers(self):
+        self._router.message(Command("set_chats"))(self.set_chats)
+
+    async def set_chats(self, message):
+        """Установка ID чатов через команду"""
+        try:
+            inviting_chat_id, invited_chat_id = map(int, message.text.split()[1:])
+            save_chat("INVITING_CHAT", inviting_chat_id)
+            save_chat("INVITED_CHAT", invited_chat_id)
+            await message.answer(f"ID чатов установлены:\nINVITING_CHAT: {inviting_chat_id}\nINVITED_CHAT: {invited_chat_id}")
+        except (IndexError, ValueError):
+            await message.answer("Используйте формат: /set_chats <INVITING_CHAT_ID> <INVITED_CHAT_ID>")
+
+class EventButton(BaseHandler):
+    def __init__(self, bot, dp, chat_id):
+        super().__init__(bot, dp)
+        self.chat_id = chat_id
+        self.waiting_for_event_text = {}
+        self.register_handlers()
+
+    def register_handlers(self):
+        self._router.callback_query(F.data == "event")(self.handle_event)
+
+    async def handle_event(self, callback_query):
+        """Обработка кнопки Мероприятие"""
+        chat_id = callback_query.message.chat.id
+        if chat_id != self.chat_id:
+            await callback_query.answer("Эта функция работает только в группе.")
+            return
+
+        # Получаем список пользователей из базы данных
+        users = get_users_in_chat(chat_id)
+        members = [f"@{username}" if username else full_name for username, full_name in users]
+        mention_text = " ".join(members)
+
+        await callback_query.message.answer(f"{callback_query.from_user.full_name}, введите текст для мероприятия:")
+        self.waiting_for_event_text[callback_query.from_user.id] = {"chat_id": chat_id, "mention_text": mention_text}
+        await callback_query.answer()
 
 class StartHandler(BaseHandler):
     def __init__(self, bot, dp):
@@ -31,7 +104,6 @@ class StartHandler(BaseHandler):
         keyboard = InlineKeyboardMarkup(inline_keyboard=kb)
         await self.bot.send_message(chat_id=message.chat.id, text="Выберите одну из опций:", reply_markup=keyboard)
 
-
 class HelpButton(BaseHandler):
     def __init__(self, bot, dp, chat_id):
         super().__init__(bot, dp)
@@ -50,8 +122,6 @@ class HelpButton(BaseHandler):
             "Сообщение содержащее Я уехал - временно покинуть группу"
         )
         await callback_query.answer()
-
-from base_handler import BaseHandler
 
 class InviteButton(BaseHandler):
     def __init__(self, bot, dp, inviting_chat_id, invited_chat_id):
@@ -77,50 +147,6 @@ class InviteButton(BaseHandler):
         except Exception as e:
             logging.error(f"Произошла ошибка: {e}")
         await callback_query.answer()
-
-from base_handler import BaseHandler
-
-class EventButton(BaseHandler):
-    def __init__(self, bot, dp, chat_id):
-        super().__init__(bot, dp)
-        self.chat_id = chat_id
-        self.waiting_for_event_text = {}
-        self.register_handlers()
-
-    def register_handlers(self):
-        self.router.callback_query(F.data == "event")(self.handle_event)
-        self.router.message()(self.handle_event_message)
-
-    async def handle_event(self, callback_query):
-        """Обработка кнопки Мероприятие"""
-        chat_id = callback_query.message.chat.id
-        if chat_id != self.chat_id:
-            await callback_query.answer("Эта функция работает только в группе.")
-            return
-
-        members = []
-        async for member in self.bot.get_chat_members(chat_id=chat_id):
-            if not member.user.is_bot and member.user.id != callback_query.from_user.id:
-                members.append(f"@{member.user.username}" if member.user.username else member.user.full_name)
-
-        mention_text = " ".join(members)
-        await callback_query.message.answer(f"{callback_query.from_user.full_name}, введите текст для мероприятия:")
-        self.waiting_for_event_text[callback_query.from_user.id] = {"chat_id": chat_id, "mention_text": mention_text}
-        await callback_query.answer()
-
-    async def handle_event_message(self, message):
-        """Обработка текста мероприятия"""
-        user_id = message.from_user.id
-        if user_id in self.waiting_for_event_text:
-            event_data = self.waiting_for_event_text.pop(user_id)
-            if message.chat.id != event_data["chat_id"]:
-                await message.reply("Пожалуйста, введите текст в правильной группе.")
-                return
-
-            event_message = message.text
-            mention_text = event_data["mention_text"]
-            await self.bot.send_message(chat_id=event_data["chat_id"], text=f"{mention_text}\n\n{event_message}")
-
 
 class DepartureHandler(BaseHandler):
     def __init__(self, bot, dp, chat_id):
@@ -152,21 +178,19 @@ class DepartureHandler(BaseHandler):
             logging.error(f"Произошла ошибка: {e}")
             await message.reply("Не удалось исключить пользователя. Попробуйте позже.")
 
-
-class StopHandler(BaseHandler):
-    def __init__(self, bot, dp, owner_id):
+class MessageHandler(BaseHandler):
+    def __init__(self, bot, dp):
         super().__init__(bot, dp)
-        self.owner_id = owner_id
         self.register_handlers()
 
     def register_handlers(self):
-        self.router.message(Command("stop"))(self.handle_stop)
+        self._router.message()(self.handle_message)
 
-    async def handle_stop(self, message):
-        """Обработка команды /stop"""
-        if message.from_user.id == self.owner_id:
-            await self.bot.send_message(chat_id=message.from_user.id, text="Бот останавливается...")
-            await self.dp.stop_polling()
-            await self.bot.session.close()
-        else:
-            await self.bot.send_message(chat_id=message.from_user.id, text="Только владелец может остановить бота.")
+    async def handle_message(self, message):
+        """Обработка текстовых сообщений"""
+        user_id = message.from_user.id
+        message_text = message.text
+
+        # Добавляем сообщение в базу данных
+        add_message(user_id, message_text)
+

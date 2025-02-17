@@ -1,23 +1,34 @@
 import asyncio
 import logging
+
 from aiogram import Bot, Dispatcher
-from config.config import OWNER_ID, INVITING_CHAT_ID, INVITED_CHAT_ID
-from handlers.handlers import StartHandler, HelpButton, InviteButton, EventButton, DepartureHandler, StopHandler
+from aiogram.client.default import DefaultBotProperties
+from aiogram.client.session.aiohttp import AiohttpSession
+from aiogram.enums import ParseMode
+from config.middleware import AntiSpamMiddleware
+from handlers.handlers import StartHandler, HelpButton, InviteButton, EventButton, DepartureHandler, NewMemberHandler, ChatSelectionHandler, MessageHandler
+from config.config import load_config
 
 # Настройка логирования
 logging.basicConfig(level=logging.INFO)
 
 # Инициализация бота
-bot = Bot(token="YOUR_BOT_TOKEN")
+session = AiohttpSession(proxy="http://proxy.server:3128")
+token, chats = load_config()
+bot = Bot(token=token, session=session, default=DefaultBotProperties(parse_mode=ParseMode.HTML))
 dp = Dispatcher()
+
+dp.message.middleware(AntiSpamMiddleware())
 
 # Инициализация обработчиков
 start_handler = StartHandler(bot, dp)
-help_button = HelpButton(bot, dp, INVITED_CHAT_ID)
-invite_button = InviteButton(bot, dp, INVITING_CHAT_ID, INVITED_CHAT_ID)
-event_button = EventButton(bot, dp, INVITED_CHAT_ID)
-departure_handler = DepartureHandler(bot, dp, INVITED_CHAT_ID)
-stop_handler = StopHandler(bot, dp, OWNER_ID)
+help_button = HelpButton(bot, dp, chats["INVITED_CHAT"])
+invite_button = InviteButton(bot, dp, chats["INVITING_CHAT"], chats["INVITED_CHAT"])
+event_button = EventButton(bot, dp, chats["INVITED_CHAT"])
+departure_handler = DepartureHandler(bot, dp, chats["INVITED_CHAT"])
+new_member_handler = NewMemberHandler(bot, dp)
+chat_selection_handler = ChatSelectionHandler(bot, dp)
+message_handler = MessageHandler(bot, dp)
 
 # Запуск бота
 async def main():
