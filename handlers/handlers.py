@@ -7,7 +7,7 @@ from aiogram.filters import Command
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 
 from config.config import add_user, save_chat, get_users_in_chat, add_message
-from base_handler import BaseHandler
+from handlers.base_handler import BaseHandler
 
 
 class NewMemberHandler(BaseHandler):

@@ -1,6 +1,5 @@
 from aiogram import BaseMiddleware
 from aiogram.types import Message
-from datetime import datetime, timedelta
 from config import connect_db
 
 class AntiSpamMiddleware(BaseMiddleware):
