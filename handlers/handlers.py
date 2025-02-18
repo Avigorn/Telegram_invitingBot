@@ -6,7 +6,7 @@ from aiogram.enums import ContentType
 from aiogram.filters import Command
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 
-from config.config import add_user, save_chat, get_users_in_chat, add_message
+from config.config import add_user, save_chat, get_users_in_chat, add_message, update_chat_data
 from handlers.base_handler import BaseHandler
 
 
@@ -30,11 +30,12 @@ class NewMemberHandler(BaseHandler):
             full_name=new_member.full_name,
             chat_id=chat_id
         )
+        logging.info(f"User {new_member.full_name} added to chat {chat_id}")  # Добавлено логирование
 
         # Приветствуем нового участника
         await self.bot.send_message(
             chat_id=chat_id,
-            text=f"Привет, {new_member.full_name}! Добро пожаловать!"
+            text=f"Приветствую, {new_member.full_name}! Добро пожаловать!"
         )
 
 class ChatSelectionHandler(BaseHandler):
@@ -51,6 +52,9 @@ class ChatSelectionHandler(BaseHandler):
             inviting_chat_id, invited_chat_id = map(int, message.text.split()[1:])
             save_chat("INVITING_CHAT", inviting_chat_id)
             save_chat("INVITED_CHAT", invited_chat_id)
+
+            update_chat_data(inviting_chat_id, invited_chat_id)
+
             await message.answer(f"ID чатов установлены:\nINVITING_CHAT: {inviting_chat_id}\nINVITED_CHAT: {invited_chat_id}")
         except (IndexError, ValueError):
             await message.answer("Используйте формат: /set_chats <INVITING_CHAT_ID> <INVITED_CHAT_ID>")
@@ -134,19 +138,26 @@ class InviteButton(BaseHandler):
         self.router.callback_query(F.data == "invite")(self.handle_invite)
 
     async def handle_invite(self, callback_query):
-        """Обработка кнопки Приглашение"""
-        user_id = callback_query.from_user.id
-        try:
-            chat_member = await self.bot.get_chat_member(chat_id=self.inviting_chat_id, user_id=user_id)
-            if chat_member.status not in ["member", "administrator", "creator"]:
-                await self.bot.send_message(chat_id=user_id, text="Вы не состоите в группе.")
-                return
+            """Обработка кнопки Приглашение"""
+            user_id = callback_query.from_user.id
+            try:
+                # Проверяем права бота в чате
+                bot_member = await self.bot.get_chat_member(chat_id=self.inviting_chat_id, user_id=self.bot.id)
+                if bot_member.status not in ["administrator", "creator"]:
+                    await self.bot.send_message(chat_id=user_id,
+                                                text="Бот не имеет прав для создания пригласительной ссылки.")
+                    return
 
-            link = await self.bot.create_chat_invite_link(chat_id=self.invited_chat_id, member_limit=1)
-            await self.bot.send_message(chat_id=user_id, text=f"Милости прошу к нашему шалашу: {link.invite_link}")
-        except Exception as e:
-            logging.error(f"Произошла ошибка: {e}")
-        await callback_query.answer()
+                chat_member = await self.bot.get_chat_member(chat_id=self.inviting_chat_id, user_id=user_id)
+                if chat_member.status not in ["member", "administrator", "creator"]:
+                    await self.bot.send_message(chat_id=user_id, text="Вы не состоите в группе.")
+                    return
+
+                link = await self.bot.create_chat_invite_link(chat_id=self.invited_chat_id, member_limit=1)
+                await self.bot.send_message(chat_id=user_id, text=f"Милости прошу к нашему шалашу: {link.invite_link}")
+            except Exception as e:
+                logging.error(f"Произошла ошибка: {e}")
+            await callback_query.answer()
 
 class DepartureHandler(BaseHandler):
     def __init__(self, bot, dp, chat_id):

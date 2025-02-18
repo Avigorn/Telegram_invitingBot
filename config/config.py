@@ -10,12 +10,25 @@ def create_tables():
 
     # Таблица для хранения ID чатов
     cursor.execute("""
-    CREATE TABLE IF NOT EXISTS chats (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        chat_type TEXT NOT NULL, -- INVITING_CHAT или INVITED_CHAT
-        chat_id INTEGER NOT NULL UNIQUE
-    )
-    """)
+        CREATE TABLE IF NOT EXISTS chats (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            chat_type TEXT NOT NULL, -- INVITING_CHAT или INVITED_CHAT
+            chat_id INTEGER NOT NULL UNIQUE
+        )
+        """)
+
+    # Таблица для хранения пользователей с внешним ключом на таблицу chats
+    cursor.execute("""
+       CREATE TABLE IF NOT EXISTS users (
+           id INTEGER PRIMARY KEY AUTOINCREMENT,
+           user_id INTEGER NOT NULL UNIQUE,
+           username TEXT,
+           full_name TEXT,
+           joined_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+           chat_id INTEGER,
+           FOREIGN KEY(chat_id) REFERENCES chats(chat_id) ON DELETE CASCADE
+       )
+       """)
 
     # Таблица для хранения пользователей
     cursor.execute("""
@@ -104,7 +117,7 @@ def add_message(user_id, message_text):
 
     connection.commit()
     connection.close()
-    """
+
 # Запись активности пользователя
 def log_user_activity(user_id):
     connection = connect_db()
@@ -117,7 +130,20 @@ def log_user_activity(user_id):
     """, (user_id,))
     connection.commit()
     connection.close()
-    """
+
+# Добавление функции для проверки и очистки неактивных пользователей
+def cleanup_inactive_users():
+    connection = connect_db()
+    cursor = connection.cursor()
+
+    # Удаляем пользователей, которые больше не являются участниками чатов
+    cursor.execute("""
+    DELETE FROM users 
+    WHERE chat_id NOT IN (SELECT chat_id FROM chats)
+    """)
+
+    connection.commit()
+    connection.close()
 
 
 # Получение всех пользователей из чата
@@ -128,3 +154,18 @@ def get_users_in_chat(chat_id):
     users = cursor.fetchall()
     connection.close()
     return users
+
+# Добавление функции для обновления данных о чатах
+def update_chat_data(inviting_chat_id, invited_chat_id):
+    connection = connect_db()
+    cursor = connection.cursor()
+
+    # Обновляем chat_id для всех пользователей
+    cursor.execute("""
+    UPDATE users
+    SET chat_id = ?
+    WHERE chat_id = ?
+    """, (inviting_chat_id, invited_chat_id))
+
+    connection.commit()
+    connection.close()
