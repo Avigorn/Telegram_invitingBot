@@ -17,14 +17,6 @@ def create_tables():
     )
     """)
 
-    # Таблица для хранения токена бота
-    cursor.execute("""
-    CREATE TABLE IF NOT EXISTS bot_token (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        token TEXT NOT NULL UNIQUE
-    )
-    """)
-
     # Таблица для хранения пользователей
     cursor.execute("""
     CREATE TABLE IF NOT EXISTS users (
@@ -67,12 +59,8 @@ def load_config():
     cursor.execute("SELECT chat_type, chat_id FROM chats")
     chats = {row[0]: row[1] for row in cursor.fetchall()}
 
-    # Загрузка токена бота
-    cursor.execute("SELECT token FROM bot_token LIMIT 1")
-    token = cursor.fetchone()[0]
-
     connection.close()
-    return token, chats
+    return chats
 
 # Сохранение ID чата
 def save_chat(chat_type, chat_id):

@@ -4,9 +4,11 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="c78ff42f-bdb3-48bd-ad18-ede2277efde1" name="Changes" comment="Add a __init__.py in config and handlers">
+    <list default="true" id="c78ff42f-bdb3-48bd-ad18-ede2277efde1" name="Changes" comment="Add a try/except func in main.py to loading inviting and invited chats and add a logical to make a tables in config.py">
+      <change afterPath="$PROJECT_DIR$/.env" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/config/config.py" beforeDir="false" afterPath="$PROJECT_DIR$/config/config.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/identifier.sqlite" beforeDir="false" afterPath="$PROJECT_DIR$/identifier.sqlite" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -127,7 +129,8 @@
       <workItem from="1739720680691" duration="10623000" />
       <workItem from="1739806158085" duration="1311000" />
       <workItem from="1739807561595" duration="5459000" />
-      <workItem from="1739817950864" duration="3673000" />
+      <workItem from="1739817950864" duration="4783000" />
+      <workItem from="1739893247334" duration="2697000" />
     </task>
     <task id="LOCAL-00001" summary="First version Telegram inviting bot">
       <option name="closed" value="true" />
@@ -233,7 +236,23 @@
       <option name="project" value="LOCAL" />
       <updated>1739820145048</updated>
     </task>
-    <option name="localTasksCounter" value="14" />
+    <task id="LOCAL-00014" summary="Add a try/except func in main.py to loading inviting and invited chats and add a logical to make a tables in config.py">
+      <option name="closed" value="true" />
+      <created>1739822047266</created>
+      <option name="number" value="00014" />
+      <option name="presentableId" value="LOCAL-00014" />
+      <option name="project" value="LOCAL" />
+      <updated>1739822047266</updated>
+    </task>
+    <task id="LOCAL-00015" summary="Add a try/except func in main.py to loading inviting and invited chats and add a logical to make a tables in config.py">
+      <option name="closed" value="true" />
+      <created>1739822055141</created>
+      <option name="number" value="00015" />
+      <option name="presentableId" value="LOCAL-00015" />
+      <option name="project" value="LOCAL" />
+      <updated>1739822055141</updated>
+    </task>
+    <option name="localTasksCounter" value="16" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -253,9 +272,10 @@
     <MESSAGE value="Add a DB with a bot_token, chats, messages, user_activity and users tables" />
     <MESSAGE value="Add a requirements.txt" />
     <MESSAGE value="Add a __init__.py in config and handlers" />
-    <option name="LAST_COMMIT_MESSAGE" value="Add a __init__.py in config and handlers" />
+    <MESSAGE value="Add a try/except func in main.py to loading inviting and invited chats and add a logical to make a tables in config.py" />
+    <option name="LAST_COMMIT_MESSAGE" value="Add a try/except func in main.py to loading inviting and invited chats and add a logical to make a tables in config.py" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
-    <SUITE FILE_PATH="coverage/pythonTelegram_bot$main.coverage" NAME="main Coverage Results" MODIFIED="1739820057351" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/pythonTelegram_bot$main.coverage" NAME="main Coverage Results" MODIFIED="1739895154365" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
   </component>
 </project>

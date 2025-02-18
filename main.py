@@ -1,5 +1,6 @@
 import asyncio
 import logging
+import os
 
 from aiogram import Bot, Dispatcher
 from aiogram.client.default import DefaultBotProperties
@@ -8,13 +9,16 @@ from aiogram.enums import ParseMode
 from config.middleware import AntiSpamMiddleware
 from handlers.handlers import StartHandler, HelpButton, InviteButton, EventButton, DepartureHandler, NewMemberHandler, ChatSelectionHandler, MessageHandler
 from config.config import load_config
+from dotenv import load_dotenv
 
 # Настройка логирования
 logging.basicConfig(level=logging.INFO)
 
+load_dotenv()
+
 # Загрузка конфигурации
 try:
-    chats = load_config()
+    chats= load_config()
     INVITING_CHAT_ID = chats.get("INVITING_CHAT")
     INVITED_CHAT_ID = chats.get("INVITED_CHAT")
 except Exception as e:
@@ -24,8 +28,7 @@ except Exception as e:
 
 # Инициализация бота
 session = AiohttpSession(proxy="http://proxy.server:3128")
-token = load_config()
-bot = Bot(token=token, session=session, default=DefaultBotProperties(parse_mode=ParseMode.HTML))
+bot = Bot(token=os.getenv('TELEGRAM_BOT_TOKEN'), session=session, default=DefaultBotProperties(parse_mode=ParseMode.HTML))
 dp = Dispatcher()
 
 dp.message.middleware(AntiSpamMiddleware())
