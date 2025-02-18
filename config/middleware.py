@@ -26,8 +26,8 @@ class AntiSpamMiddleware(BaseMiddleware):
         # Если запросов больше 5 — считаем это спамом
         if count >= 5:
             connection.close()
-            await event.answer("Слишком много запросов! Пожалуйста, подождите.")
-            return
+            await event.reply("Слишком много запросов! Пожалуйста, подождите.")  # Используем reply
+            return  # Прерываем обработку запроса
 
         # Добавляем новый запрос
         cursor.execute("""
