@@ -1,9 +1,10 @@
 from aiogram import BaseMiddleware
-from aiogram.types import Message
+from aiogram.types import CallbackQuery
 from config import connect_db
 
 class AntiSpamMiddleware(BaseMiddleware):
-    async def __call__(self, handler, event: Message, data):
+    async def __call__(self, handler, event, data):
+        # Определяем ID пользователя
         user_id = event.from_user.id
 
         # Подключение к базе данных
@@ -26,8 +27,13 @@ class AntiSpamMiddleware(BaseMiddleware):
         # Если запросов больше 5 — считаем это спамом
         if count >= 5:
             connection.close()
-            await event.reply("Слишком много запросов! Пожалуйста, подождите.")  # Используем reply
-            return  # Прерываем обработку запроса
+
+            # Проверяем тип события (Message или CallbackQuery)
+            if isinstance(event, CallbackQuery):
+                # Для callback-запросов используем callback_query.answer()
+                await event.answer("Слишком много запросов! Пожалуйста, подождите.", show_alert=True)
+
+            return  # Прерываем дальнейшую обработку
 
         # Добавляем новый запрос
         cursor.execute("""
