@@ -119,17 +119,35 @@ def add_message(user_id, message_text):
     connection.close()
 
 # Запись активности пользователя
+# Запись активности пользователя с ограничением до 50 записей
 def log_user_activity(user_id):
     connection = connect_db()
     cursor = connection.cursor()
 
-    # Добавляем запись о запросе пользователя
-    cursor.execute("""
-    #INSERT INTO user_activity (user_id)
-    #VALUES (?)
-    """, (user_id,))
-    connection.commit()
-    connection.close()
+    try:
+        # Добавляем новую запись о запросе пользователя
+        cursor.execute("""
+        INSERT INTO user_activity (user_id)
+        VALUES (?)
+        """, (user_id,))
+
+        # Удаляем старые записи, если их больше 50 для данного пользователя
+        cursor.execute("""
+        DELETE FROM user_activity
+        WHERE id NOT IN (
+            SELECT id
+            FROM user_activity
+            WHERE user_id = ?
+            ORDER BY request_time DESC
+            LIMIT 50
+        )
+        """, (user_id,))
+
+        connection.commit()
+    except Exception as e:
+        logging.error(f"Ошибка при записи активности пользователя: {e}")
+    finally:
+        connection.close()
 
 # Добавление функции для проверки и очистки неактивных пользователей
 def cleanup_inactive_users():

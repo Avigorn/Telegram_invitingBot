@@ -109,23 +109,22 @@ class StartHandler(BaseHandler):
         await self.bot.send_message(chat_id=message.chat.id, text="Выберите одну из опций:", reply_markup=keyboard)
 
 class HelpButton(BaseHandler):
-    def __init__(self, bot, dp, chat_id):
+    def __init__(self, bot, dp):
         super().__init__(bot, dp)
-        self.chat_id = chat_id
         self.register_handlers()
 
     def register_handlers(self):
-        self.router.callback_query(F.data == "help")(self.handle_help)
+        self._router.callback_query(F.data == "help")(self.handle_help)
 
     async def handle_help(self, callback_query):
         """Обработка кнопки Помощь"""
         await callback_query.message.answer(
             "Список моих возможностей:\n"
-            "Приглашение - получить пригласительную ссылку\n"
-            'Мероприятие - отметить всех и указать причину\n'
-            "Сообщение содержащее Я уехал - временно покинуть группу"
+            "• Приглашение - получить пригласительную ссылку\n"
+            "• Мероприятие - отметить всех и указать причину\n"
+            "• Сообщение 'Я уехал' - временно покинуть группу"
         )
-        await callback_query.answer()
+        await callback_query.answer()  # Подтверждаем получение запроса
 
 class InviteButton(BaseHandler):
     def __init__(self, bot, dp, inviting_chat_id, invited_chat_id):
@@ -157,7 +156,7 @@ class InviteButton(BaseHandler):
                 await self.bot.send_message(chat_id=user_id, text=f"Милости прошу к нашему шалашу: {link.invite_link}")
             except Exception as e:
                 logging.error(f"Произошла ошибка: {e}")
-            await callback_query.answer()
+            await callback_query.answer()  # Подтверждаем получение запроса
 
 class DepartureHandler(BaseHandler):
     def __init__(self, bot, dp, chat_id):

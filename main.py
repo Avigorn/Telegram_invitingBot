@@ -32,10 +32,11 @@ bot = Bot(token=os.getenv('TELEGRAM_BOT_TOKEN'), session=session, default=Defaul
 dp = Dispatcher()
 
 dp.message.middleware(AntiSpamMiddleware())
+dp.callback_query.middleware(AntiSpamMiddleware())  # Добавляем middleware для callback-запросов
 
 # Инициализация обработчиков
 start_handler = StartHandler(bot, dp)
-help_button = HelpButton(bot, dp, INVITED_CHAT_ID)
+help_button = HelpButton(bot, dp)
 invite_button = InviteButton(bot, dp, INVITING_CHAT_ID, INVITED_CHAT_ID)
 event_button = EventButton(bot, dp, INVITED_CHAT_ID)
 departure_handler = DepartureHandler(bot, dp, INVITED_CHAT_ID)
