@@ -1,3 +1,4 @@
+import logging
 import sqlite3
 
 # Подключение к базе данных
