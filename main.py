@@ -8,7 +8,7 @@ from aiogram.client.session.aiohttp import AiohttpSession
 from aiogram.enums import ParseMode
 from config.middleware import AntiSpamMiddleware
 from handlers.handlers import StartHandler, HelpButton, InviteButton, EventButton, DepartureHandler, NewMemberHandler, ChatSelectionHandler, MessageHandler
-from config.config import load_config
+from config.config import load_config, add_existing_users_to_db
 from dotenv import load_dotenv
 
 # Настройка логирования
@@ -44,8 +44,13 @@ new_member_handler = NewMemberHandler(bot, dp)
 chat_selection_handler = ChatSelectionHandler(bot, dp)
 message_handler = MessageHandler(bot, dp)
 
-# Запуск бота
 async def main():
+    # Добавляем существующих пользователей из чатов в базу данных
+    if INVITING_CHAT_ID:
+        await asyncio.to_thread(add_existing_users_to_db, INVITING_CHAT_ID)
+    if INVITED_CHAT_ID:
+        await asyncio.to_thread(add_existing_users_to_db, INVITED_CHAT_ID)
+
     await dp.start_polling(bot)
 
 if __name__ == '__main__':

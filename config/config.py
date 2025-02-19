@@ -188,3 +188,43 @@ def update_chat_data(inviting_chat_id, invited_chat_id):
 
     connection.commit()
     connection.close()
+import asyncio
+
+async def add_existing_users_to_db(bot, chat_id):
+    """Добавление существующих пользователей из чата в базу данных"""
+    connection = connect_db()
+
+    try:
+        # Получаем список участников чата через Telegram API
+        users = await get_chat_members(bot, chat_id)  # Используем await для асинхронного вызова
+        for user in users:
+            add_user(
+                user_id=user.user.id,  # Обратите внимание на user.user (для объекта ChatMember)
+                username=user.user.username,
+                full_name=user.user.full_name,
+                chat_id=chat_id
+            )
+        connection.commit()
+    except Exception as e:
+        logging.error(f"Ошибка при добавлении существующих пользователей: {e}")
+    finally:
+        connection.close()
+
+
+async def get_chat_members(bot, chat_id):
+    """Получение списка участников чата"""
+    members = []
+    try:
+        # Используем метод get_chat_member_count для получения количества участников
+        total_members = await bot.get_chat_member_count(chat_id)
+        offset = 0
+        limit = 200  # Максимальное количество участников за один запрос
+
+        while offset < total_members:
+            # Получаем участников порциями
+            chunk = await bot.get_chat_members(chat_id, offset=offset, limit=limit)
+            members.extend(chunk)
+            offset += limit
+    except Exception as e:
+        logging.error(f"Ошибка при получении участников чата: {e}")
+    return members
