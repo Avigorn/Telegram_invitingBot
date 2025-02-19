@@ -1,10 +1,13 @@
 from aiogram import BaseMiddleware
-from aiogram.types import CallbackQuery
+from aiogram.types import Message, CallbackQuery
 from config import connect_db
 
 class AntiSpamMiddleware(BaseMiddleware):
     async def __call__(self, handler, event, data):
-        # Определяем ID пользователя
+        # Проверяем, является ли событие командой или callback-запросом
+        if not isinstance(event, (Message, CallbackQuery)):
+            return await handler(event, data)  # Пропускаем обработку для других типов событий
+
         user_id = event.from_user.id
 
         # Подключение к базе данных
@@ -32,8 +35,11 @@ class AntiSpamMiddleware(BaseMiddleware):
             if isinstance(event, CallbackQuery):
                 # Для callback-запросов используем callback_query.answer()
                 await event.answer("Слишком много запросов! Пожалуйста, подождите.", show_alert=True)
+            elif isinstance(event, Message) and event.via_bot:  # Проверяем, что сообщение через бота
+                # Для команд или сообщений через бота используем message.answer()
+                await event.answer("Слишком много запросов! Пожалуйста, подождите.")
 
-            return  # Прерываем дальнейшую обработку
+            return  # Останавливаем дальнейшую обработку
 
         # Добавляем новый запрос
         cursor.execute("""
