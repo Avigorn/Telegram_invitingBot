@@ -1,6 +1,6 @@
 import logging
 import sqlite3
-
+from aiogram.types import ChatMember
 from logger import setup_logger
 
 logger = setup_logger()
@@ -192,7 +192,6 @@ def update_chat_data(inviting_chat_id, invited_chat_id):
 
     connection.commit()
     connection.close()
-import asyncio
 
 async def add_existing_users_to_db(bot, chat_id):
     """Добавление существующих пользователей из чата в базу данных"""
@@ -219,9 +218,22 @@ async def get_chat_members(bot, chat_id):
     """Получение списка участников чата"""
     members = []
     try:
-        # Используем метод iterate_chat_members для получения всех участников чата
-        async for member in bot.iterate_chat_members(chat_id):
-            members.append(member)
+        # Получаем общее количество участников
+        total_members = await bot.get_chat_member_count(chat_id)
+        offset = 0
+        limit = 200  # Максимальное количество участников за один запрос
+
+        while offset < total_members:
+            # Telegram API не предоставляет прямой метод для получения всех участников,
+            # поэтому мы будем получать их по одному через get_chat_member.
+            for user_id in range(offset, min(offset + limit, total_members)):
+                try:
+                    member = await bot.get_chat_member(chat_id, user_id)
+                    if isinstance(member, ChatMember):  # Проверяем тип объекта
+                        members.append(member)
+                except Exception as e:
+                    logging.error(f"Ошибка при получении участника с ID {user_id}: {e}")
+            offset += limit
     except Exception as e:
         logging.error(f"Ошибка при получении участников чата: {e}")
     return members
