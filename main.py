@@ -1,5 +1,5 @@
 import asyncio
-import logging
+from logger import setup_logger
 import os
 
 from aiogram import Bot, Dispatcher
@@ -12,7 +12,7 @@ from config.config import load_config, add_existing_users_to_db
 from dotenv import load_dotenv
 
 # Настройка логирования
-logging.basicConfig(level=logging.INFO)
+logger = setup_logger()
 
 load_dotenv()
 
@@ -22,7 +22,7 @@ try:
     INVITING_CHAT_ID = chats.get("INVITING_CHAT")
     INVITED_CHAT_ID = chats.get("INVITED_CHAT")
 except Exception as e:
-    print(f"Ошибка загрузки конфигурации: {e}")
+    logger.error(f"Ошибка загрузки конфигурации: {e}")
     INVITING_CHAT_ID = None
     INVITED_CHAT_ID = None
 
@@ -45,13 +45,22 @@ chat_selection_handler = ChatSelectionHandler(bot, dp)
 message_handler = MessageHandler(bot, dp)
 
 async def main():
-    # Добавляем существующих пользователей из чатов в базу данных
+    logger.info("Запуск приложения")  # Логируем начало работы приложения
     if INVITING_CHAT_ID:
-        await add_existing_users_to_db(bot, INVITING_CHAT_ID)  # Используем await
+        try:
+            await add_existing_users_to_db(bot, INVITING_CHAT_ID)
+        except Exception as e:
+            logger.error(f"Ошибка добавления пользователей из чата INVITING_CHAT: {e}")  # Логируем ошибку
     if INVITED_CHAT_ID:
-        await add_existing_users_to_db(bot, INVITED_CHAT_ID)  # Используем await
+        try:
+            await add_existing_users_to_db(bot, INVITED_CHAT_ID)
+        except Exception as e:
+            logger.error(f"Ошибка добавления пользователей из чата INVITED_CHAT: {e}")  # Логируем ошибку
 
     await dp.start_polling(bot)
 
 if __name__ == '__main__':
-    asyncio.run(main())
+    try:
+        asyncio.run(main())
+    except Exception as e:
+        logger.critical(f"Критическая ошибка в основном потоке: {e}")

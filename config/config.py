@@ -1,6 +1,10 @@
 import logging
 import sqlite3
 
+from logger import setup_logger
+
+logger = setup_logger()
+
 # Подключение к базе данных
 def connect_db():
     return sqlite3.connect("identifier.sqlite")
@@ -206,7 +210,7 @@ async def add_existing_users_to_db(bot, chat_id):
             )
         connection.commit()
     except Exception as e:
-        logging.error(f"Ошибка при добавлении существующих пользователей: {e}")
+        logger.exception(f"Ошибка при добавлении существующих пользователей: {e}")
     finally:
         connection.close()
 
@@ -226,5 +230,5 @@ async def get_chat_members(bot, chat_id):
             members.extend(chunk)
             offset += limit
     except Exception as e:
-        logging.error(f"Ошибка при получении участников чата: {e}")
+        logger.exception(f"Ошибка при получении участников чата: {e}")
     return members
