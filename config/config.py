@@ -219,16 +219,9 @@ async def get_chat_members(bot, chat_id):
     """Получение списка участников чата"""
     members = []
     try:
-        # Используем метод get_chat_member_count для получения количества участников
-        total_members = await bot.get_chat_member_count(chat_id)
-        offset = 0
-        limit = 200  # Максимальное количество участников за один запрос
-
-        while offset < total_members:
-            # Получаем участников порциями
-            chunk = await bot.get_chat_members(chat_id, offset=offset, limit=limit)
-            members.extend(chunk)
-            offset += limit
+        # Используем метод iterate_chat_members для получения всех участников чата
+        async for member in bot.iterate_chat_members(chat_id):
+            members.append(member)
     except Exception as e:
-        logger.exception(f"Ошибка при получении участников чата: {e}")
+        logging.error(f"Ошибка при получении участников чата: {e}")
     return members

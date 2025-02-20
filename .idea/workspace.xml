@@ -4,10 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="c78ff42f-bdb3-48bd-ad18-ede2277efde1" name="Changes" comment="Changed a def main">
-      <change afterPath="$PROJECT_DIR$/logger.py" afterDir="false" />
+    <list default="true" id="c78ff42f-bdb3-48bd-ad18-ede2277efde1" name="Changes" comment="Add a logging">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/config/config.py" beforeDir="false" afterPath="$PROJECT_DIR$/config/config.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -130,7 +129,7 @@
       <workItem from="1739817950864" duration="4783000" />
       <workItem from="1739893247334" duration="11194000" />
       <workItem from="1739979677838" duration="9482000" />
-      <workItem from="1740066004001" duration="3437000" />
+      <workItem from="1740066004001" duration="4387000" />
     </task>
     <task id="LOCAL-00001" summary="First version Telegram inviting bot">
       <option name="closed" value="true" />
@@ -340,7 +339,15 @@
       <option name="project" value="LOCAL" />
       <updated>1740066844157</updated>
     </task>
-    <option name="localTasksCounter" value="27" />
+    <task id="LOCAL-00027" summary="Add a logging">
+      <option name="closed" value="true" />
+      <created>1740069672103</created>
+      <option name="number" value="00027" />
+      <option name="presentableId" value="LOCAL-00027" />
+      <option name="project" value="LOCAL" />
+      <updated>1740069672103</updated>
+    </task>
+    <option name="localTasksCounter" value="28" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -371,7 +378,8 @@
     <MESSAGE value="Remake a function of adding existing users to DB" />
     <MESSAGE value="Update requirements" />
     <MESSAGE value="Changed a def main" />
-    <option name="LAST_COMMIT_MESSAGE" value="Changed a def main" />
+    <MESSAGE value="Add a logging" />
+    <option name="LAST_COMMIT_MESSAGE" value="Add a logging" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/pythonTelegram_bot$main.coverage" NAME="main Coverage Results" MODIFIED="1740066451813" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
