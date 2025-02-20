@@ -214,6 +214,8 @@ async def add_existing_users_to_db(bot, chat_id):
         connection.close()
 
 
+from aiogram.types import ChatMember
+
 async def get_chat_members(bot, chat_id):
     """Получение списка участников чата"""
     members = []
@@ -225,14 +227,16 @@ async def get_chat_members(bot, chat_id):
 
         while offset < total_members:
             # Telegram API не предоставляет прямой метод для получения всех участников,
-            # поэтому мы будем получать их по одному через get_chat_member.
+            # поэтому мы будем получать их через итерацию
+            chunk = []  # Здесь будет храниться порция участников
             for user_id in range(offset, min(offset + limit, total_members)):
                 try:
                     member = await bot.get_chat_member(chat_id, user_id)
-                    if isinstance(member, ChatMember):  # Проверяем тип объекта
-                        members.append(member)
+                    if isinstance(member, ChatMember) and member.status != "left":
+                        chunk.append(member)
                 except Exception as e:
                     logging.error(f"Ошибка при получении участника с ID {user_id}: {e}")
+            members.extend(chunk)
             offset += limit
     except Exception as e:
         logging.error(f"Ошибка при получении участников чата: {e}")
