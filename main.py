@@ -47,9 +47,9 @@ message_handler = MessageHandler(bot, dp)
 async def main():
     # Добавляем существующих пользователей из чатов в базу данных
     if INVITING_CHAT_ID:
-        await asyncio.to_thread(add_existing_users_to_db, INVITING_CHAT_ID)
+        await add_existing_users_to_db(bot, INVITING_CHAT_ID)  # Используем await
     if INVITED_CHAT_ID:
-        await asyncio.to_thread(add_existing_users_to_db, INVITED_CHAT_ID)
+        await add_existing_users_to_db(bot, INVITED_CHAT_ID)  # Используем await
 
     await dp.start_polling(bot)
 
