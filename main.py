@@ -8,7 +8,7 @@ from aiogram.client.session.aiohttp import AiohttpSession
 from aiogram.enums import ParseMode
 from config.middleware import AntiSpamMiddleware
 from handlers.handlers import StartHandler, HelpButton, InviteButton, EventButton, DepartureHandler, NewMemberHandler, ChatSelectionHandler, MessageHandler
-from config.config import load_config, add_existing_users_to_db
+from config.config import load_config
 from dotenv import load_dotenv
 
 # Настройка логирования
