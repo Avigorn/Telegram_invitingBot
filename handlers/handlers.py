@@ -1,13 +1,15 @@
 import logging
 from datetime import datetime, timedelta
 
-from aiogram import F
+from aiogram import Bot
 from aiogram.enums import ContentType
 from aiogram.filters import Command
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
+from aiogram.utils.markdown import hlink
 
-from config.config import add_user, save_chat, get_users_in_chat, add_message, update_chat_data
+from config.config import add_user, save_chat, add_message, update_chat_data, logger
 from handlers.base_handler import BaseHandler
+from aiogram.enums import ParseMode
 
 
 class NewMemberHandler(BaseHandler):
@@ -59,6 +61,8 @@ class ChatSelectionHandler(BaseHandler):
         except (IndexError, ValueError):
             await message.answer("Используйте формат: /set_chats <INVITING_CHAT_ID> <INVITED_CHAT_ID>")
 
+from aiogram import F, types
+
 class EventButton(BaseHandler):
     def __init__(self, bot, dp, chat_id):
         super().__init__(bot, dp)
@@ -67,23 +71,44 @@ class EventButton(BaseHandler):
         self.register_handlers()
 
     def register_handlers(self):
+        # Регистрируем обработчик для кнопки "Мероприятие"
         self._router.callback_query(F.data == "event")(self.handle_event)
+        # Регистрируем обработчик для получения текста мероприятия
+        self._router.message()(self.send_event_announcement)
 
-    async def handle_event(self, callback_query):
-        """Обработка кнопки Мероприятие"""
+    async def handle_event(self, callback_query: types.CallbackQuery):
+        """Обработка кнопки 'Мероприятие'"""
         chat_id = callback_query.message.chat.id
         if chat_id != self.chat_id:
             await callback_query.answer("Эта функция работает только в группе.")
             return
 
-        # Получаем список пользователей из базы данных
-        users = get_users_in_chat(chat_id)
-        members = [f"@{username}" if username else full_name for username, full_name in users]
-        mention_text = " ".join(members)
-
+        # Запрашиваем у пользователя текст объявления
         await callback_query.message.answer(f"{callback_query.from_user.full_name}, введите текст для мероприятия:")
-        self.waiting_for_event_text[callback_query.from_user.id] = {"chat_id": chat_id, "mention_text": mention_text}
+        self.waiting_for_event_text[callback_query.from_user.id] = {"chat_id": chat_id}
         await callback_query.answer()
+
+    async def send_event_announcement(self, message: types.Message):
+        """Отправка объявления о мероприятии со всеми упоминаниями"""
+        user_id = message.from_user.id
+
+        # Проверяем, ждем ли мы текст объявления от этого пользователя
+        if user_id not in self.waiting_for_event_text:
+            return
+
+        chat_id = self.waiting_for_event_text[user_id]["chat_id"]
+        announcement_text = message.text
+
+        try:
+            # Вызываем функцию mention_all для отметки всех участников
+            await mention_all(chat_id, self.bot, announcement_text)
+            await message.answer("Объявление отправлено!")
+        except Exception as e:
+            logger.error(f"Ошибка при отправке объявления: {e}")
+            await message.answer("Не удалось отправить объявление. Попробуйте снова.")
+
+        # Удаляем ожидание текста от пользователя
+        del self.waiting_for_event_text[user_id]
 
 class StartHandler(BaseHandler):
     def __init__(self, bot, dp):
@@ -204,3 +229,37 @@ class MessageHandler(BaseHandler):
         # Добавляем сообщение в базу данных
         add_message(user_id, message_text)
 
+async def mention_all(chat_id: int, bot: Bot, message_text: str):
+    try:
+        # Получаем список всех участников чата
+        members = []
+        member_count = await bot.get_chat_member_count(chat_id)
+        for i in range(0, member_count):
+            try:
+                member = await bot.get_chat_member(chat_id, i)
+                if member.user.is_bot or member.status in ["left", "kicked"]:
+                    continue  # Пропускаем ботов и тех, кто покинул чат
+                members.append(member.user)
+            except Exception as e:
+                continue  # Если не удается получить информацию о пользователе
+
+        # Формируем сообщение с упоминаниями
+        full_message = f"{message_text}\n\n"
+        for user in members:
+            if user.username:
+                mention = f"@{user.username}"
+            else:
+                mention = hlink(title=user.full_name, url=f"tg://user?id={user.id}")
+            full_message += f"{mention} "
+
+            # Проверяем длину сообщения (максимум 4096 символов)
+            if len(full_message) > 3500:  # Оставляем место для безопасного завершения сообщения
+                await bot.send_message(chat_id, full_message, parse_mode=ParseMode.HTML)
+                full_message = ""  # Начинаем новое сообщение
+
+        # Отправляем последнее сообщение, если оно не пустое
+        if full_message:
+            await bot.send_message(chat_id, full_message, parse_mode=ParseMode.HTML)
+
+    except Exception as e:
+        logger.exception(f"Ошибка при отметке всех пользователей: {e}")

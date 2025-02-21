@@ -193,51 +193,46 @@ def update_chat_data(inviting_chat_id, invited_chat_id):
     connection.commit()
     connection.close()
 
-async def add_existing_users_to_db(bot, chat_id):
-    """Добавление существующих пользователей из чата в базу данных"""
-    connection = connect_db()
+#async def add_existing_users_to_db(bot, chat_id):
+#    connection = connect_db()
+#
+#    try:
+#        # Получаем список участников чата через Telegram API
+#        users = await get_chat_members(bot, chat_id)  # Используем await для асинхронного вызова
+#       for user in users:
+#           add_user(
+#               user_id=user.user.id,  # Обратите внимание на user.user (для объекта ChatMember)
+#               username=user.user.username,
+#               full_name=user.user.full_name,
+#                chat_id=chat_id
+#            )
+#        connection.commit()
+#    except Exception as e:
+#        logger.exception(f"Ошибка при добавлении существующих пользователей: {e}")
+#    finally:
+#        connection.close()
 
-    try:
-        # Получаем список участников чата через Telegram API
-        users = await get_chat_members(bot, chat_id)  # Используем await для асинхронного вызова
-        for user in users:
-            add_user(
-                user_id=user.user.id,  # Обратите внимание на user.user (для объекта ChatMember)
-                username=user.user.username,
-                full_name=user.user.full_name,
-                chat_id=chat_id
-            )
-        connection.commit()
-    except Exception as e:
-        logger.exception(f"Ошибка при добавлении существующих пользователей: {e}")
-    finally:
-        connection.close()
 
+#async def get_chat_members(bot, chat_id):
+#    members = []
+#    try:
+#        # Получаем общее количество участников
+#        total_members = await bot.get_chat_member_count(chat_id)
+#        offset = 0
+#        limit = 200  # Максимальное количество участников за один запрос
 
-from aiogram.types import ChatMember
+#        while offset < total_members:
+#            # Telegram API не предоставляет прямой метод для получения всех участников,
+#            # поэтому мы будем получать их по одному через get_chat_member.
+#            for user_id in range(offset, min(offset + limit, total_members)):
+#                try:
+#                    member = await bot.get_chat_member(chat_id, user_id)
+#                    if isinstance(member, ChatMember):  # Проверяем тип объекта
+#                        members.append(member)
+#                except Exception as e:
+#                    logging.error(f"Ошибка при получении участника с ID {user_id}: {e}")
+#            offset += limit
+#    except Exception as e:
+#        logging.error(f"Ошибка при получении участников чата: {e}")
+#    return members
 
-async def get_chat_members(bot, chat_id):
-    """Получение списка участников чата"""
-    members = []
-    try:
-        # Получаем общее количество участников
-        total_members = await bot.get_chat_member_count(chat_id)
-        offset = 0
-        limit = 200  # Максимальное количество участников за один запрос
-
-        while offset < total_members:
-            # Telegram API не предоставляет прямой метод для получения всех участников,
-            # поэтому мы будем получать их через итерацию
-            chunk = []  # Здесь будет храниться порция участников
-            for user_id in range(offset, min(offset + limit, total_members)):
-                try:
-                    member = await bot.get_chat_member(chat_id, user_id)
-                    if isinstance(member, ChatMember) and member.status != "left":
-                        chunk.append(member)
-                except Exception as e:
-                    logging.error(f"Ошибка при получении участника с ID {user_id}: {e}")
-            members.extend(chunk)
-            offset += limit
-    except Exception as e:
-        logging.error(f"Ошибка при получении участников чата: {e}")
-    return members
