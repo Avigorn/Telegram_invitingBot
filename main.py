@@ -46,16 +46,6 @@ message_handler = MessageHandler(bot, dp)
 
 async def main():
     logger.info("Запуск приложения")  # Логируем начало работы приложения
-    if INVITING_CHAT_ID:
-        try:
-            await add_existing_users_to_db(bot, INVITING_CHAT_ID)
-        except Exception as e:
-            logger.error(f"Ошибка добавления пользователей из чата INVITING_CHAT: {e}")  # Логируем ошибку
-    if INVITED_CHAT_ID:
-        try:
-            await add_existing_users_to_db(bot, INVITED_CHAT_ID)
-        except Exception as e:
-            logger.error(f"Ошибка добавления пользователей из чата INVITED_CHAT: {e}")  # Логируем ошибку
 
     await dp.start_polling(bot)
 
