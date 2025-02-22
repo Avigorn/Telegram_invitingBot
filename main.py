@@ -1,7 +1,6 @@
 import asyncio
 from logger import setup_logger
 import os
-import logging
 
 from aiogram import Bot, Dispatcher
 from aiogram.client.default import DefaultBotProperties
@@ -46,17 +45,17 @@ chat_selection_handler = ChatSelectionHandler(bot, dp)
 message_handler = MessageHandler(bot, dp)
 
 async def main():
-    logging.info("Запуск приложения")  # Логируем начало работы приложения
+    logger.info("Запуск приложения")  # Логируем начало работы приложения
     if INVITING_CHAT_ID:
         try:
             await add_existing_users_to_db(bot, INVITING_CHAT_ID)
         except Exception as e:
-            logger.error(f"Ошибка добавления пользователей из чата INVITING_CHAT: {e}", exc_info=True)  # Логируем ошибку
+            logger.error(f"Ошибка добавления пользователей из чата INVITING_CHAT: {e}")  # Логируем ошибку
     if INVITED_CHAT_ID:
         try:
             await add_existing_users_to_db(bot, INVITED_CHAT_ID)
         except Exception as e:
-            logger.error(f"Ошибка добавления пользователей из чата INVITED_CHAT: {e}", exc_info=True)  # Логируем ошибку
+            logger.error(f"Ошибка добавления пользователей из чата INVITED_CHAT: {e}")  # Логируем ошибку
 
     await dp.start_polling(bot)
 
@@ -64,4 +63,4 @@ if __name__ == '__main__':
     try:
         asyncio.run(main())
     except Exception as e:
-        logger.critical(f"Критическая ошибка в основном потоке: {e}", exc_info=True)
+        logger.critical(f"Критическая ошибка в основном потоке: {e}")
