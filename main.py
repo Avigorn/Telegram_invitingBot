@@ -50,12 +50,12 @@ async def main():
         try:
             await add_existing_users_to_db(bot, INVITING_CHAT_ID)
         except Exception as e:
-            logger.error(f"Ошибка добавления пользователей из чата INVITING_CHAT: {e}")  # Логируем ошибку
+            logger.error(f"Ошибка добавления пользователей из чата INVITING_CHAT: {e}", exc_info=True)  # Логируем ошибку
     if INVITED_CHAT_ID:
         try:
             await add_existing_users_to_db(bot, INVITED_CHAT_ID)
         except Exception as e:
-            logger.error(f"Ошибка добавления пользователей из чата INVITED_CHAT: {e}")  # Логируем ошибку
+            logger.error(f"Ошибка добавления пользователей из чата INVITED_CHAT: {e}", exc_info=True)  # Логируем ошибку
 
     await dp.start_polling(bot)
 
@@ -63,4 +63,4 @@ if __name__ == '__main__':
     try:
         asyncio.run(main())
     except Exception as e:
-        logger.critical(f"Критическая ошибка в основном потоке: {e}")
+        logger.critical(f"Критическая ошибка в основном потоке: {e}", exc_info=True)

@@ -8,6 +8,9 @@ from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 
 from config.config import add_user, save_chat, get_users_in_chat, add_message, update_chat_data
 from handlers.base_handler import BaseHandler
+from logger import setup_logger
+
+logger = setup_logger()
 
 
 class NewMemberHandler(BaseHandler):
@@ -30,7 +33,7 @@ class NewMemberHandler(BaseHandler):
             full_name=new_member.full_name,
             chat_id=chat_id
         )
-        logging.info(f"User {new_member.full_name} added to chat {chat_id}")  # Добавлено логирование
+        logger.info(f"User {new_member.full_name} added to chat {chat_id}")  # Добавлено логирование
 
         # Приветствуем нового участника
         await self.bot.send_message(
@@ -155,7 +158,7 @@ class InviteButton(BaseHandler):
                 link = await self.bot.create_chat_invite_link(chat_id=self.invited_chat_id, member_limit=1)
                 await self.bot.send_message(chat_id=user_id, text=f"Милости прошу к нашему шалашу: {link.invite_link}")
             except Exception as e:
-                logging.error(f"Произошла ошибка: {e}")
+                logger.exception(f"Произошла ошибка: {e}",exc_info=True)
             await callback_query.answer()  # Подтверждаем получение запроса
 
 class DepartureHandler(BaseHandler):
@@ -185,7 +188,7 @@ class DepartureHandler(BaseHandler):
             await self.bot.send_message(chat_id=self.chat_id, text=f"Уважаемый {message.from_user.full_name} сообщил, что уехал, и был временно исключен из группы.")
             await self.bot.send_message(chat_id=user_id, text="Вы были временно исключены из группы.")
         except Exception as e:
-            logging.error(f"Произошла ошибка: {e}")
+            logger.error(f"Произошла ошибка: {e}", exc_info=True)
             await message.reply("Не удалось исключить пользователя. Попробуйте позже.")
 
 class MessageHandler(BaseHandler):

@@ -235,9 +235,9 @@ async def get_chat_members(bot, chat_id):
                     if isinstance(member, ChatMember) and member.status != "left":
                         chunk.append(member)
                 except Exception as e:
-                    logging.error(f"Ошибка при получении участника с ID {user_id}: {e}")
+                    logger.error(f"Ошибка при получении участника с ID {user_id}: {e}", exc_info=True)
             members.extend(chunk)
             offset += limit
     except Exception as e:
-        logging.error(f"Ошибка при получении участников чата: {e}")
+        logger.error(f"Ошибка при получении участников чата: {e}", exc_info=True)
     return members
