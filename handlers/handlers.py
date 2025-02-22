@@ -158,7 +158,7 @@ class InviteButton(BaseHandler):
                 link = await self.bot.create_chat_invite_link(chat_id=self.invited_chat_id, member_limit=1)
                 await self.bot.send_message(chat_id=user_id, text=f"Милости прошу к нашему шалашу: {link.invite_link}")
             except Exception as e:
-                logger.exception(f"Произошла ошибка: {e}",exc_info=True)
+                logging.exception(f"Произошла ошибка: {e}",exc_info=True)
             await callback_query.answer()  # Подтверждаем получение запроса
 
 class DepartureHandler(BaseHandler):
@@ -188,7 +188,7 @@ class DepartureHandler(BaseHandler):
             await self.bot.send_message(chat_id=self.chat_id, text=f"Уважаемый {message.from_user.full_name} сообщил, что уехал, и был временно исключен из группы.")
             await self.bot.send_message(chat_id=user_id, text="Вы были временно исключены из группы.")
         except Exception as e:
-            logger.error(f"Произошла ошибка: {e}", exc_info=True)
+            logging.error(f"Произошла ошибка: {e}", exc_info=True)
             await message.reply("Не удалось исключить пользователя. Попробуйте позже.")
 
 class MessageHandler(BaseHandler):

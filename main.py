@@ -1,6 +1,7 @@
 import asyncio
 from logger import setup_logger
 import os
+import logging
 
 from aiogram import Bot, Dispatcher
 from aiogram.client.default import DefaultBotProperties
@@ -45,7 +46,7 @@ chat_selection_handler = ChatSelectionHandler(bot, dp)
 message_handler = MessageHandler(bot, dp)
 
 async def main():
-    logger.info("Запуск приложения")  # Логируем начало работы приложения
+    logging.info("Запуск приложения")  # Логируем начало работы приложения
     if INVITING_CHAT_ID:
         try:
             await add_existing_users_to_db(bot, INVITING_CHAT_ID)
