@@ -16,6 +16,7 @@ def setup_logger():
 
     # Форматирование логов
     formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+    console_handler.setFormatter(formatter)
     file_handler.setFormatter(formatter)
 
     # Добавление обработчиков к логгеру

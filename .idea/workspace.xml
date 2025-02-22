@@ -4,8 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="c78ff42f-bdb3-48bd-ad18-ede2277efde1" name="Changes" comment="Add a logger">
-      <change beforePath="$PROJECT_DIR$/logger.py" beforeDir="false" afterPath="$PROJECT_DIR$/logger.py" afterDir="false" />
+    <list default="true" id="c78ff42f-bdb3-48bd-ad18-ede2277efde1" name="Changes" comment="Add a console logging">
+      <change beforePath="$PROJECT_DIR$/handlers/handlers.py" beforeDir="false" afterPath="$PROJECT_DIR$/handlers/handlers.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -370,7 +371,15 @@
       <option name="project" value="LOCAL" />
       <updated>1740215606553</updated>
     </task>
-    <option name="localTasksCounter" value="31" />
+    <task id="LOCAL-00031" summary="Add a console logging">
+      <option name="closed" value="true" />
+      <created>1740216660296</created>
+      <option name="number" value="00031" />
+      <option name="presentableId" value="LOCAL-00031" />
+      <option name="project" value="LOCAL" />
+      <updated>1740216660296</updated>
+    </task>
+    <option name="localTasksCounter" value="32" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -388,7 +397,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Add proxy.txt" />
     <MESSAGE value="Change function of starting program in string 73" />
     <MESSAGE value="The bot variable has been changed" />
     <MESSAGE value="Add a buttons" />
@@ -413,7 +421,8 @@
     <MESSAGE value="Add a logging" />
     <MESSAGE value="Changed a get_chat_members" />
     <MESSAGE value="Add a logger" />
-    <option name="LAST_COMMIT_MESSAGE" value="Add a logger" />
+    <MESSAGE value="Add a console logging" />
+    <option name="LAST_COMMIT_MESSAGE" value="Add a console logging" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/pythonTelegram_bot$main.coverage" NAME="main Coverage Results" MODIFIED="1740066451813" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
