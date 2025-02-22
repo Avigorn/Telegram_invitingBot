@@ -21,10 +21,10 @@ class AntiSpamMiddleware(BaseMiddleware):
         WHERE request_time < datetime('now', '-60 seconds')
         """)
 
-        # Подсчитываем количество запросов за последние 60 секунд
+        # Подсчитываем количество запросов за последние 30 секунд
         cursor.execute("""
         SELECT COUNT(*) FROM user_activity
-        WHERE user_id = ? AND request_time > datetime('now', '-60 seconds')
+        WHERE user_id = ? AND request_time > datetime('now', '-30 seconds')
         """, (user_id,))
         count = cursor.fetchone()[0]
 
