@@ -4,7 +4,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="c78ff42f-bdb3-48bd-ad18-ede2277efde1" name="Changes" comment="Add get_available_chats" />
+    <list default="true" id="c78ff42f-bdb3-48bd-ad18-ede2277efde1" name="Changes" comment="Checking for chats INVITING_CHAT and INVITED_CHAT is set up in ChatSelectionStates">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/handlers/handlers.py" beforeDir="false" afterPath="$PROJECT_DIR$/handlers/handlers.py" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -127,7 +130,7 @@
       <workItem from="1739893247334" duration="11194000" />
       <workItem from="1739979677838" duration="9482000" />
       <workItem from="1740066004001" duration="5601000" />
-      <workItem from="1740314602890" duration="12863000" />
+      <workItem from="1740314602890" duration="13515000" />
     </task>
     <task id="LOCAL-00001" summary="First version Telegram inviting bot">
       <option name="closed" value="true" />
@@ -433,7 +436,15 @@
       <option name="project" value="LOCAL" />
       <updated>1740332378075</updated>
     </task>
-    <option name="localTasksCounter" value="39" />
+    <task id="LOCAL-00039" summary="Checking for chats INVITING_CHAT and INVITED_CHAT is set up in ChatSelectionStates">
+      <option name="closed" value="true" />
+      <created>1740332965539</created>
+      <option name="number" value="00039" />
+      <option name="presentableId" value="LOCAL-00039" />
+      <option name="project" value="LOCAL" />
+      <updated>1740332965539</updated>
+    </task>
+    <option name="localTasksCounter" value="40" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -451,7 +462,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Add a def router" />
     <MESSAGE value="Add a DB with a bot_token, chats, messages, user_activity and users tables" />
     <MESSAGE value="Add a requirements.txt" />
     <MESSAGE value="Add a __init__.py in config and handlers" />
@@ -476,7 +486,8 @@
     <MESSAGE value="Changed ChatSelectionHandler" />
     <MESSAGE value="Changed ChatSelectionHandler with used aiogram_dialog" />
     <MESSAGE value="Add get_available_chats" />
-    <option name="LAST_COMMIT_MESSAGE" value="Add get_available_chats" />
+    <MESSAGE value="Checking for chats INVITING_CHAT and INVITED_CHAT is set up in ChatSelectionStates" />
+    <option name="LAST_COMMIT_MESSAGE" value="Checking for chats INVITING_CHAT and INVITED_CHAT is set up in ChatSelectionStates" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/pythonTelegram_bot$main.coverage" NAME="main Coverage Results" MODIFIED="1740066451813" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
