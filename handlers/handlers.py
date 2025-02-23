@@ -4,7 +4,8 @@ from datetime import datetime, timedelta
 from aiogram import F
 from aiogram.enums import ContentType
 from aiogram.filters import Command
-from config.config import add_user, save_chat, get_users_in_chat, add_message, update_chat_data, get_available_chats
+from config.config import add_user, save_chat, get_users_in_chat, add_message, update_chat_data, get_available_chats, \
+    load_config
 from handlers.base_handler import BaseHandler
 
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
@@ -59,7 +60,24 @@ class ChatSelectionHandler(BaseHandler):
     async def start_chat_selection(self, callback: CallbackQuery, dialog_manager: DialogManager):
         """Начало процесса выбора чатов"""
         inviting_chat_id = callback.message.chat.id  # ID текущего чата становится INVITING_CHAT
-        save_chat("INVITING_CHAT", inviting_chat_id)  # Сохраняем INVITING_CHAT
+
+        # Загружаем конфигурацию чатов
+        chats = load_config()  # Используем существующую функцию load_config
+
+        # Проверяем наличие установленных чатов
+        existing_inviting_chat_id = chats.get("INVITING_CHAT")
+        existing_invited_chat_id = chats.get("INVITED_CHAT")
+
+        if existing_inviting_chat_id and existing_invited_chat_id:
+            # Если чаты уже установлены, отправляем уведомление
+            await callback.answer(
+                f"Чаты уже установлены:\nINVITING_CHAT: {existing_inviting_chat_id}\nINVITED_CHAT: {existing_invited_chat_id}",
+                show_alert=True  # Показываем алерт для лучшей видимости
+            )
+            return
+
+        # Сохраняем новый INVITING_CHAT
+        save_chat("INVITING_CHAT", inviting_chat_id)
         await dialog_manager.start(
             state=ChatSelectionStates.SELECT_INVITED_CHAT,
             mode=StartMode.RESET_STACK,
