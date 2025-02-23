@@ -4,12 +4,16 @@ from datetime import datetime, timedelta
 from aiogram import F
 from aiogram.enums import ContentType
 from aiogram.filters import Command
-from config.config import add_user, save_chat, get_users_in_chat, add_message, update_chat_data
+from config.config import add_user, save_chat, get_users_in_chat, add_message, update_chat_data, get_available_chats
 from handlers.base_handler import BaseHandler
 
-from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton, CallbackQuery
-from aiogram.fsm.context import FSMContext
+from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 from aiogram.fsm.state import StatesGroup, State
+
+from aiogram_dialog import DialogManager, StartMode, Window, Dialog
+from aiogram_dialog.widgets.kbd import Select
+from aiogram_dialog.widgets.text import Const, Format
+from aiogram.types import CallbackQuery
 
 
 class NewMemberHandler(BaseHandler):
@@ -41,8 +45,7 @@ class NewMemberHandler(BaseHandler):
         )
 
 class ChatSelectionStates(StatesGroup):
-    SELECT_INVITING_CHAT = State()
-    SELECT_INVITED_CHAT = State()
+    SELECT_INVITED_CHAT = State()  # Только одно состояние для выбора INVITED_CHAT
 
 class ChatSelectionHandler(BaseHandler):
     def __init__(self, bot, dp):
@@ -52,48 +55,48 @@ class ChatSelectionHandler(BaseHandler):
     def register_handlers(self):
         # Регистрация обработчиков для callback_data="set_chats"
         self._router.callback_query(F.data == "set_chats")(self.start_chat_selection)
-        self._router.callback_query(F.data.startswith("select_chat_"))(self.handle_chat_selection)
 
-    async def start_chat_selection(self, callback: CallbackQuery):
+    async def start_chat_selection(self, callback: CallbackQuery, dialog_manager: DialogManager):
         """Начало процесса выбора чатов"""
-        await callback.message.edit_text(
-            "Выберите INVITING_CHAT:",
-            reply_markup=self.generate_keyboard()
+        inviting_chat_id = callback.message.chat.id  # ID текущего чата становится INVITING_CHAT
+        save_chat("INVITING_CHAT", inviting_chat_id)  # Сохраняем INVITING_CHAT
+        await dialog_manager.start(
+            state=ChatSelectionStates.SELECT_INVITED_CHAT,
+            mode=StartMode.RESET_STACK,
+            data={"inviting_chat_id": inviting_chat_id}
         )
-        await self.set_state(callback.from_user.id, ChatSelectionStates.SELECT_INVITING_CHAT)
         await callback.answer()
 
-    async def handle_chat_selection(self, callback: CallbackQuery, state: FSMContext):
-        """Обработка выбора чата из инлайн-кнопок"""
-        chat_id = int(callback.data.split("_")[-1])
-        current_state = await state.get_state()
+# Определение диалогового окна для выбора чата
+async def get_chat_list(dialog_manager: DialogManager, **kwargs):
+    return {"chats": get_available_chats}
 
-        if current_state == ChatSelectionStates.SELECT_INVITING_CHAT.state:
-            save_chat("INVITING_CHAT", chat_id)
-            await state.update_data(inviting_chat_id=chat_id)
-            await callback.message.edit_text(
-                "INVITING_CHAT установлен.\nТеперь выберите INVITED_CHAT:",
-                reply_markup=self.generate_keyboard()
-            )
-            await self.set_state(callback.from_user.id, ChatSelectionStates.SELECT_INVITED_CHAT)
-        elif current_state == ChatSelectionStates.SELECT_INVITED_CHAT.state:
-            data = await state.get_data()
-            inviting_chat_id = data.get('inviting_chat_id')
-            save_chat("INVITED_CHAT", chat_id)
-            update_chat_data(inviting_chat_id, chat_id)
-            await callback.message.edit_text(
-                f"ID чатов установлены:\nINVITING_CHAT: {inviting_chat_id}\nINVITED_CHAT: {chat_id}"
-            )
-            await state.clear()
-        await callback.answer()
+async def on_chat_selected(callback: CallbackQuery, select: Select, manager: DialogManager, item_id):
+    selected_chat = next((chat for chat in get_available_chats() if str(chat['id']) == item_id), None)
+    if selected_chat:
+        save_chat("INVITED_CHAT", selected_chat["id"])  # Сохраняем выбранный INVITED_CHAT
+        inviting_chat_id = manager.current_context().dialog_data.get("inviting_chat_id")
+        update_chat_data(inviting_chat_id, selected_chat["id"])
+        await callback.message.answer(
+            f"ID чатов установлены:\nINVITING_CHAT: {inviting_chat_id}\nINVITED_CHAT: {selected_chat['id']}"
+        )
+    await manager.done()
 
-    def generate_keyboard(self):
-        """Генерация клавиатуры с доступными чатами"""
-        chats = get_available_chats()  # Функция должна возвращать список чатов
-        keyboard = InlineKeyboardMarkup(row_width=1)
-        for chat in chats:
-            keyboard.add(InlineKeyboardButton(f"{chat.id} - {chat.title}", callback_data=f"select_chat_{chat.id}"))
-        return keyboard
+chat_select_window = Window(
+    Const("Выберите чат, куда хотите пригласить:"),
+    Select(
+        Format("{item[title]}"),  # Текст кнопки
+        id="w_chats",             # Идентификатор виджета
+        items="chats",            # Ключ для списка элементов
+        item_id_getter=lambda x: str(x['id']),  # Функция получения идентификатора элемента
+        on_click=on_chat_selected # Обработчик выбора
+    ),
+    getter=get_chat_list,         # Функция получения данных для виджетов
+    state=ChatSelectionStates.SELECT_INVITED_CHAT
+)
+
+# Регистрация диалога
+dialog = Dialog(chat_select_window)
 
 class EventButton(BaseHandler):
     def __init__(self, bot, dp, chat_id):
