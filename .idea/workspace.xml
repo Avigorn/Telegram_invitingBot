@@ -4,12 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="c78ff42f-bdb3-48bd-ad18-ede2277efde1" name="Changes" comment="Changed a information log">
+    <list default="true" id="c78ff42f-bdb3-48bd-ad18-ede2277efde1" name="Changes" comment="Add a exc_info=True to exceptions">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/config/config.py" beforeDir="false" afterPath="$PROJECT_DIR$/config/config.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/handlers/handlers.py" beforeDir="false" afterPath="$PROJECT_DIR$/handlers/handlers.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/logger.py" beforeDir="false" afterPath="$PROJECT_DIR$/logger.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -133,7 +130,7 @@
       <workItem from="1739893247334" duration="11194000" />
       <workItem from="1739979677838" duration="9482000" />
       <workItem from="1740066004001" duration="5601000" />
-      <workItem from="1740314602890" duration="300000" />
+      <workItem from="1740314602890" duration="5950000" />
     </task>
     <task id="LOCAL-00001" summary="First version Telegram inviting bot">
       <option name="closed" value="true" />
@@ -407,7 +404,15 @@
       <option name="project" value="LOCAL" />
       <updated>1740218215665</updated>
     </task>
-    <option name="localTasksCounter" value="35" />
+    <task id="LOCAL-00035" summary="Add a exc_info=True to exceptions">
+      <option name="closed" value="true" />
+      <created>1740315041408</created>
+      <option name="number" value="00035" />
+      <option name="presentableId" value="LOCAL-00035" />
+      <option name="project" value="LOCAL" />
+      <updated>1740315041408</updated>
+    </task>
+    <option name="localTasksCounter" value="36" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -425,7 +430,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Add a buttons" />
     <MESSAGE value="Bot has been changed to MVC pattern" />
     <MESSAGE value="Add Access Modifiers to base_handler.py" />
     <MESSAGE value="Changed class StartHandler to DB model" />
@@ -450,7 +454,8 @@
     <MESSAGE value="Add a console logging" />
     <MESSAGE value="logging updated" />
     <MESSAGE value="Changed a information log" />
-    <option name="LAST_COMMIT_MESSAGE" value="Changed a information log" />
+    <MESSAGE value="Add a exc_info=True to exceptions" />
+    <option name="LAST_COMMIT_MESSAGE" value="Add a exc_info=True to exceptions" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/pythonTelegram_bot$main.coverage" NAME="main Coverage Results" MODIFIED="1740066451813" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />

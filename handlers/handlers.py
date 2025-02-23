@@ -4,10 +4,12 @@ from datetime import datetime, timedelta
 from aiogram import F
 from aiogram.enums import ContentType
 from aiogram.filters import Command
-from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
-
 from config.config import add_user, save_chat, get_users_in_chat, add_message, update_chat_data
 from handlers.base_handler import BaseHandler
+
+from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton, CallbackQuery
+from aiogram.fsm.context import FSMContext
+from aiogram.fsm.state import StatesGroup, State
 
 
 class NewMemberHandler(BaseHandler):
@@ -38,26 +40,60 @@ class NewMemberHandler(BaseHandler):
             text=f"Приветствую, {new_member.full_name}! Добро пожаловать!"
         )
 
+class ChatSelectionStates(StatesGroup):
+    SELECT_INVITING_CHAT = State()
+    SELECT_INVITED_CHAT = State()
+
 class ChatSelectionHandler(BaseHandler):
     def __init__(self, bot, dp):
         super().__init__(bot, dp)
         self.register_handlers()
 
     def register_handlers(self):
-        self._router.message(Command("set_chats"))(self.set_chats)
+        # Регистрация обработчиков для callback_data="set_chats"
+        self._router.callback_query(F.data == "set_chats")(self.start_chat_selection)
+        self._router.callback_query(F.data.startswith("select_chat_"))(self.handle_chat_selection)
 
-    async def set_chats(self, message):
-        """Установка ID чатов через команду"""
-        try:
-            inviting_chat_id, invited_chat_id = map(int, message.text.split()[1:])
-            save_chat("INVITING_CHAT", inviting_chat_id)
-            save_chat("INVITED_CHAT", invited_chat_id)
+    async def start_chat_selection(self, callback: CallbackQuery):
+        """Начало процесса выбора чатов"""
+        await callback.message.edit_text(
+            "Выберите INVITING_CHAT:",
+            reply_markup=self.generate_keyboard()
+        )
+        await self.set_state(callback.from_user.id, ChatSelectionStates.SELECT_INVITING_CHAT)
+        await callback.answer()
 
-            update_chat_data(inviting_chat_id, invited_chat_id)
+    async def handle_chat_selection(self, callback: CallbackQuery, state: FSMContext):
+        """Обработка выбора чата из инлайн-кнопок"""
+        chat_id = int(callback.data.split("_")[-1])
+        current_state = await state.get_state()
 
-            await message.answer(f"ID чатов установлены:\nINVITING_CHAT: {inviting_chat_id}\nINVITED_CHAT: {invited_chat_id}")
-        except (IndexError, ValueError):
-            await message.answer("Используйте формат: /set_chats <INVITING_CHAT_ID> <INVITED_CHAT_ID>")
+        if current_state == ChatSelectionStates.SELECT_INVITING_CHAT.state:
+            save_chat("INVITING_CHAT", chat_id)
+            await state.update_data(inviting_chat_id=chat_id)
+            await callback.message.edit_text(
+                "INVITING_CHAT установлен.\nТеперь выберите INVITED_CHAT:",
+                reply_markup=self.generate_keyboard()
+            )
+            await self.set_state(callback.from_user.id, ChatSelectionStates.SELECT_INVITED_CHAT)
+        elif current_state == ChatSelectionStates.SELECT_INVITED_CHAT.state:
+            data = await state.get_data()
+            inviting_chat_id = data.get('inviting_chat_id')
+            save_chat("INVITED_CHAT", chat_id)
+            update_chat_data(inviting_chat_id, chat_id)
+            await callback.message.edit_text(
+                f"ID чатов установлены:\nINVITING_CHAT: {inviting_chat_id}\nINVITED_CHAT: {chat_id}"
+            )
+            await state.clear()
+        await callback.answer()
+
+    def generate_keyboard(self):
+        """Генерация клавиатуры с доступными чатами"""
+        chats = get_available_chats()  # Функция должна возвращать список чатов
+        keyboard = InlineKeyboardMarkup(row_width=1)
+        for chat in chats:
+            keyboard.add(InlineKeyboardButton(f"{chat.id} - {chat.title}", callback_data=f"select_chat_{chat.id}"))
+        return keyboard
 
 class EventButton(BaseHandler):
     def __init__(self, bot, dp, chat_id):
@@ -104,6 +140,7 @@ class StartHandler(BaseHandler):
             [InlineKeyboardButton(text="Помощь", callback_data="help")],
             [InlineKeyboardButton(text="Приглашение", callback_data="invite")],
             [InlineKeyboardButton(text="Мероприятие", callback_data="event")],
+            [InlineKeyboardButton(text="Установить чаты", callback_data="set_chats")],
         ]
         keyboard = InlineKeyboardMarkup(inline_keyboard=kb)
         await self.bot.send_message(chat_id=message.chat.id, text="Выберите одну из опций:", reply_markup=keyboard)
