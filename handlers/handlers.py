@@ -185,7 +185,7 @@ class DepartureHandler(BaseHandler):
             await self.bot.send_message(chat_id=self.chat_id, text=f"Уважаемый {message.from_user.full_name} сообщил, что уехал, и был временно исключен из группы.")
             await self.bot.send_message(chat_id=user_id, text="Вы были временно исключены из группы.")
         except Exception as e:
-            logging.error(f"Произошла ошибка: {e}")
+            logging.error(f"Произошла ошибка: {e}", exc_info=True)
             await message.reply("Не удалось исключить пользователя. Попробуйте позже.")
 
 class MessageHandler(BaseHandler):

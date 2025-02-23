@@ -14,10 +14,13 @@ def setup_logger():
     file_handler = RotatingFileHandler('app.log', maxBytes=1024*1024*5, backupCount=3)
     file_handler.setLevel(logging.DEBUG)  # Все уровни в файл
 
-    # Форматирование логов
-    formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
-    console_handler.setFormatter(formatter)
-    file_handler.setFormatter(formatter)
+    # Форматирование логов для консоли
+    console_formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+    console_handler.setFormatter(console_formatter)
+
+    # Форматирование логов для файла с добавлением traceback
+    file_formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s\n%(exc_info)s')
+    file_handler.setFormatter(file_formatter)
 
     # Добавление обработчиков к логгеру
     logger.addHandler(console_handler)
