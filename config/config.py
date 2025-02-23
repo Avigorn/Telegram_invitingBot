@@ -241,3 +241,13 @@ async def get_chat_members(bot, chat_id):
     except Exception as e:
         logging.error(f"Ошибка при получении участников чата: {e}", exc_info=True)
     return members
+
+
+def get_available_chats():
+    """Получение списка доступных чатов"""
+    connection = connect_db()
+    cursor = connection.cursor()
+    cursor.execute("SELECT chat_id, title FROM chats")
+    chats = [{"id": row[0], "title": row[1]} for row in cursor.fetchall()]
+    connection.close()
+    return chats
